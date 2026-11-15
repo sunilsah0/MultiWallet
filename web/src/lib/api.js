@@ -70,10 +70,23 @@ export const topup = (amountOre, key) =>
 export const sendMoney = (p, key) =>
   request('/wallet/send', { method: 'POST', body: p, headers: { 'Idempotency-Key': key } });
 
-// Businesses
-export const listMerchants = () => request('/merchants', { auth: false });
+// Businesses (owner)
 export const myMerchants = () => request('/merchants/mine');
 export const createMerchant = (p) => request('/merchants', { method: 'POST', body: p });
 export const merchantSales = (id) => request(`/merchants/${id}/sales`);
-export const payMerchant = (id, p, key) =>
-  request(`/merchants/${id}/pay`, { method: 'POST', body: p, headers: { 'Idempotency-Key': key } });
+
+// Browsing (public)
+export const getCategory = (category) => request(`/catalog/category/${category}`, { auth: false });
+export const getStore = (id) => request(`/catalog/merchants/${id}`, { auth: false });
+
+// Products (owner)
+export const addProduct = (merchantId, p) =>
+  request(`/catalog/merchants/${merchantId}/products`, { method: 'POST', body: p });
+export const removeProduct = (id) => request(`/catalog/products/${id}`, { method: 'DELETE' });
+
+// Orders
+export const createOrder = (p, key) =>
+  request('/orders', { method: 'POST', body: p, headers: { 'Idempotency-Key': key } });
+export const myOrders = () => request('/orders/mine');
+export const businessOrders = (merchantId) => request(`/orders/business/${merchantId}`);
+export const completeOrder = (id) => request(`/orders/${id}/complete`, { method: 'POST' });

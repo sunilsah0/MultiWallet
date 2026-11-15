@@ -6,6 +6,8 @@ import rateLimit from 'express-rate-limit';
 import authRoutes from './routes/auth.js';
 import walletRoutes from './routes/wallet.js';
 import merchantRoutes from './routes/merchants.js';
+import catalogRoutes from './routes/catalog.js';
+import orderRoutes from './routes/orders.js';
 
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
   console.error('JWT_SECRET is missing or too short (use at least 32 characters) in api/.env');
@@ -29,6 +31,8 @@ const authLimiter = rateLimit({
 app.use('/auth', authLimiter, authRoutes);
 app.use('/wallet', walletRoutes);
 app.use('/merchants', merchantRoutes);
+app.use('/catalog', catalogRoutes);
+app.use('/orders', orderRoutes);
 
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 

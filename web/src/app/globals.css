@@ -102,3 +102,27 @@ th.right, td.right { text-align: right; }
   .two-col { grid-template-columns: 1fr; }
   .nav-inner { flex-wrap: wrap; gap: 12px; }
 }
+
+/* ---------- Phase 7: services, store, cart, orders ---------- */
+.service-card { display: block; color: var(--text); font-weight: 400; transition: transform 0.1s; }
+.service-card:hover { transform: translateY(-2px); }
+.service-icon { display: block; width: 52px; height: 52px; border-radius: 16px; margin-bottom: 16px; }
+
+.item-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+.qty { display: flex; align-items: center; gap: 10px; }
+.qty button { width: 34px; height: 34px; border-radius: 17px; border: 1.5px solid var(--border); background: #fff; font-size: 18px; cursor: pointer; }
+.qty button:disabled { opacity: 0.4; cursor: not-allowed; }
+.qty span { min-width: 18px; text-align: center; font-weight: 600; }
+.cart { position: sticky; top: 16px; }
+
+.big-check { width: 72px; height: 72px; border-radius: 36px; background: var(--green); color: #fff; font-size: 38px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+.narrow.center { margin-left: auto; margin-right: auto; }
+
+.order-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 8px; }
+.status { display: inline-block; font-size: 12px; font-weight: 700; text-transform: uppercase; padding: 4px 12px; border-radius: 999px; }
+.status-paid { background: #dbeafe; color: #1e40af; }
+.status-completed { background: #dcfce7; color: #166534; }
+.status-cancelled { background: #fee2e2; color: #991b1b; }
+.status-pending { background: #f3f4f6; color: #374151; }
+
+.link-button { background: none; border: 0; color: var(--red); font-size: 13px; cursor: pointer; font-weight: 600; }

@@ -7,7 +7,8 @@ import { useAuth } from '../lib/auth';
 
 const LINKS = [
   ['/dashboard', 'Wallet'],
-  ['/merchants', 'Pay a business'],
+  ['/services', 'Services'],
+  ['/orders', 'My orders'],
   ['/business', 'My business'],
 ];
 
@@ -30,7 +31,11 @@ export default function Shell({ children }) {
           <span className="brand">MultiWallet</span>
           <nav className="links">
             {LINKS.map(([href, label]) => (
-              <Link key={href} href={href} className={pathname === href ? 'active' : ''}>
+              <Link
+                key={href}
+                href={href}
+                className={pathname === href || pathname.startsWith(href + '/') ? 'active' : ''}
+              >
                 {label}
               </Link>
             ))}
