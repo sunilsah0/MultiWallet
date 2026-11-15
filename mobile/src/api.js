@@ -76,3 +76,22 @@ export const createOrder = (payload, key) =>
 export const myOrders = () => request('/orders/mine');
 export const businessOrders = (merchantId) => request(`/orders/business/${merchantId}`);
 export const completeOrder = (id) => request(`/orders/${id}/complete`, { method: 'POST' });
+
+// Pay a business directly (used by QR payments)
+export const payMerchant = (id, payload, key) =>
+  request(`/merchants/${id}/pay`, {
+    method: 'POST',
+    body: payload,
+    headers: { 'Idempotency-Key': key },
+  });
+
+// Who owns this phone number? (shown before paying)
+export const lookupUser = (phone) => request(`/users/lookup?phone=${encodeURIComponent(phone)}`);
+
+// Payment requests
+export const createRequest = (payload) => request('/requests', { method: 'POST', body: payload });
+export const incomingRequests = () => request('/requests/incoming');
+export const outgoingRequests = () => request('/requests/outgoing');
+export const payRequest = (id) => request(`/requests/${id}/pay`, { method: 'POST' });
+export const declineRequest = (id) => request(`/requests/${id}/decline`, { method: 'POST' });
+export const cancelRequest = (id) => request(`/requests/${id}/cancel`, { method: 'POST' });

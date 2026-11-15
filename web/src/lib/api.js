@@ -90,3 +90,11 @@ export const createOrder = (p, key) =>
 export const myOrders = () => request('/orders/mine');
 export const businessOrders = (merchantId) => request(`/orders/business/${merchantId}`);
 export const completeOrder = (id) => request(`/orders/${id}/complete`, { method: 'POST' });
+
+// Payment requests
+export const createRequest = (p) => request('/requests', { method: 'POST', body: p });
+export const incomingRequests = () => request('/requests/incoming');
+export const outgoingRequests = () => request('/requests/outgoing');
+export const payRequest = (id) => request(`/requests/${id}/pay`, { method: 'POST' });
+export const declineRequest = (id) => request(`/requests/${id}/decline`, { method: 'POST' });
+export const cancelRequest = (id) => request(`/requests/${id}/cancel`, { method: 'POST' });

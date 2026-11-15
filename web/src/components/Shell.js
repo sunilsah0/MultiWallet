@@ -9,6 +9,7 @@ const LINKS = [
   ['/dashboard', 'Wallet'],
   ['/services', 'Services'],
   ['/orders', 'My orders'],
+  ['/requests', 'Requests'],
   ['/business', 'My business'],
 ];
 

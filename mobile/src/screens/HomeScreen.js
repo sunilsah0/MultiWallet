@@ -26,7 +26,7 @@ const SERVICES = [
   ['food', 'Food', '#DC2626'],
 ];
 
-export default function HomeScreen({ wallet, history, onSend, onCategory, onSeeAll, onTopup }) {
+export default function HomeScreen({ wallet, history, onSend, onScan, onRequest, onCategory, onSeeAll, onTopup }) {
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const firstName = (wallet.full_name || '').split(' ')[0];
@@ -58,8 +58,8 @@ export default function HomeScreen({ wallet, history, onSend, onCategory, onSeeA
 
       <View style={{ flexDirection: 'row', marginHorizontal: -4, marginBottom: 20 }}>
         <ActionButton label="Send" color={colors.blue} onPress={onSend} />
-        <ActionButton label="Request" color={colors.green} onPress={() => setMessage('Request money is coming soon')} />
-        <ActionButton label="Scan QR" color={colors.text} onPress={() => setMessage('QR scanning is coming soon')} />
+        <ActionButton label="Request" color={colors.green} onPress={onRequest} />
+        <ActionButton label="Scan QR" color={colors.text} onPress={onScan} />
       </View>
 
       {message ? <Text style={{ color: colors.muted, marginBottom: 12 }}>{message}</Text> : null}

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Shell from '../../components/Shell';
+import QrCard from '../../components/QrCard';
 import {
   addProduct,
   businessOrders,
@@ -197,6 +198,8 @@ function BusinessDetails({ merchantId }) {
           <strong>{sales.summary.sales_count}</strong>
         </div>
       </div>
+
+      <QrCard merchantId={merchantId} name={sales.merchant.name} />
 
       <div className="card">
         <h2>Orders</h2>

@@ -28,6 +28,7 @@ const PILLS = {
   completed: ['#DCFCE7', '#166534'],
   cancelled: ['#FEE2E2', '#991B1B'],
   pending: ['#F3F4F6', '#374151'],
+  declined: ['#FEF3C7', '#92400E'],
 };
 
 export function StatusPill({ status }) {

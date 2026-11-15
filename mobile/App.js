@@ -16,6 +16,10 @@ import CategoryScreen from './src/screens/CategoryScreen';
 import StoreScreen from './src/screens/StoreScreen';
 import OrdersScreen from './src/screens/OrdersScreen';
 import BusinessScreen from './src/screens/BusinessScreen';
+import ScanScreen from './src/screens/ScanScreen';
+import PayScreen from './src/screens/PayScreen';
+import MyQrScreen from './src/screens/MyQrScreen';
+import RequestsScreen from './src/screens/RequestsScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 
 // Which bottom tab lights up for each screen
@@ -27,6 +31,8 @@ const TAB_OF = {
   profile: 'profile',
   orders: 'profile',
   business: 'profile',
+  requests: 'home',
+  myqr: 'home',
 };
 
 function Centered({ children }) {
@@ -129,6 +135,23 @@ export default function App() {
         onSeeOrders={() => go('orders')}
       />
     );
+  } else if (screen === 'scan') {
+    content = (
+      <ScanScreen
+        onBack={() => go('home')}
+        onMyQr={() => go('myqr')}
+        onCode={(code) => go('pay', { code })}
+      />
+    );
+  } else if (screen === 'pay') {
+    content = (
+      <PayScreen
+        code={nav.params.code}
+        myPhone={wallet.phone}
+        onBack={() => go('scan')}
+        onDone={() => go('home')}
+      />
+    );
   } else {
     content = (
       <View style={{ flex: 1 }}>
@@ -138,6 +161,8 @@ export default function App() {
               wallet={wallet}
               history={history}
               onSend={() => go('send')}
+              onScan={() => go('scan')}
+              onRequest={() => go('requests')}
               onCategory={(c) => go('category', { category: c })}
               onSeeAll={() => go('history')}
               onTopup={addTestMoney}
@@ -159,6 +184,8 @@ export default function App() {
           {screen === 'history' && <HistoryScreen history={history} />}
           {screen === 'orders' && <OrdersScreen onBack={() => go('profile')} />}
           {screen === 'business' && <BusinessScreen onBack={() => go('profile')} />}
+          {screen === 'requests' && <RequestsScreen onBack={() => go('home')} />}
+          {screen === 'myqr' && <MyQrScreen wallet={wallet} onBack={() => go('home')} />}
           {screen === 'profile' && (
             <ProfileScreen
               wallet={wallet}

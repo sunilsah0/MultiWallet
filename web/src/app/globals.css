@@ -126,3 +126,11 @@ th.right, td.right { text-align: right; }
 .status-pending { background: #f3f4f6; color: #374151; }
 
 .link-button { background: none; border: 0; color: var(--red); font-size: 13px; cursor: pointer; font-weight: 600; }
+
+/* ---------- Phase 9: QR and requests ---------- */
+.qr-card { display: flex; flex-direction: column; align-items: flex-start; }
+.qr-box { background: #fff; padding: 12px; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 12px; }
+.code-text { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; word-break: break-all; background: #f3f4f6; padding: 8px 10px; border-radius: 8px; margin: 10px 0; user-select: all; }
+.row-actions { display: flex; gap: 8px; }
+.row-actions .btn { margin: 0; }
+.status-declined { background: #fef3c7; color: #92400e; }
