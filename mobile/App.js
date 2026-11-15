@@ -12,7 +12,22 @@ import HomeScreen from './src/screens/HomeScreen';
 import SendScreen from './src/screens/SendScreen';
 import HistoryScreen from './src/screens/HistoryScreen';
 import ServicesScreen from './src/screens/ServicesScreen';
+import CategoryScreen from './src/screens/CategoryScreen';
+import StoreScreen from './src/screens/StoreScreen';
+import OrdersScreen from './src/screens/OrdersScreen';
+import BusinessScreen from './src/screens/BusinessScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
+
+// Which bottom tab lights up for each screen
+const TAB_OF = {
+  home: 'home',
+  services: 'services',
+  category: 'services',
+  history: 'history',
+  profile: 'profile',
+  orders: 'profile',
+  business: 'profile',
+};
 
 function Centered({ children }) {
   return (
@@ -27,8 +42,11 @@ export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [wallet, setWallet] = useState(null);
   const [history, setHistory] = useState([]);
-  const [screen, setScreen] = useState('home'); // home | services | history | profile | send
+  const [nav, setNav] = useState({ name: 'home', params: {} });
   const [loadError, setLoadError] = useState('');
+
+  const screen = nav.name;
+  const go = useCallback((name, params = {}) => setNav({ name, params }), []);
 
   const logout = useCallback(async () => {
     await clearToken();
@@ -36,7 +54,7 @@ export default function App() {
     setWallet(null);
     setHistory([]);
     setLoadError('');
-    setScreen('home');
+    setNav({ name: 'home', params: {} });
   }, []);
 
   // Fetch balance and history from the API
@@ -71,7 +89,7 @@ export default function App() {
 
   function handleAuthed() {
     setLoggedIn(true);
-    setScreen('home');
+    go('home');
     reload();
   }
 
@@ -100,7 +118,17 @@ export default function App() {
       </Centered>
     );
   } else if (screen === 'send') {
-    content = <SendScreen onBack={() => setScreen('home')} onDone={() => setScreen('home')} />;
+    content = <SendScreen onBack={() => go('home')} onDone={() => go('home')} />;
+  } else if (screen === 'store') {
+    // full screen: has its own cart bar instead of the tab bar
+    content = (
+      <StoreScreen
+        key={nav.params.id}
+        storeId={nav.params.id}
+        onBack={() => go('category', { category: nav.params.category })}
+        onSeeOrders={() => go('orders')}
+      />
+    );
   } else {
     content = (
       <View style={{ flex: 1 }}>
@@ -109,17 +137,38 @@ export default function App() {
             <HomeScreen
               wallet={wallet}
               history={history}
-              onSend={() => setScreen('send')}
-              onServices={() => setScreen('services')}
-              onSeeAll={() => setScreen('history')}
+              onSend={() => go('send')}
+              onCategory={(c) => go('category', { category: c })}
+              onSeeAll={() => go('history')}
               onTopup={addTestMoney}
             />
           )}
-          {screen === 'services' && <ServicesScreen />}
+          {screen === 'services' && (
+            <ServicesScreen
+              onOpenCategory={(c) => go('category', { category: c })}
+              onOrders={() => go('orders')}
+            />
+          )}
+          {screen === 'category' && (
+            <CategoryScreen
+              category={nav.params.category}
+              onBack={() => go('services')}
+              onOpenStore={(id) => go('store', { id, category: nav.params.category })}
+            />
+          )}
           {screen === 'history' && <HistoryScreen history={history} />}
-          {screen === 'profile' && <ProfileScreen wallet={wallet} onLogout={logout} />}
+          {screen === 'orders' && <OrdersScreen onBack={() => go('profile')} />}
+          {screen === 'business' && <BusinessScreen onBack={() => go('profile')} />}
+          {screen === 'profile' && (
+            <ProfileScreen
+              wallet={wallet}
+              onLogout={logout}
+              onOrders={() => go('orders')}
+              onBusiness={() => go('business')}
+            />
+          )}
         </View>
-        <TabBar active={screen} onChange={setScreen} />
+        <TabBar active={TAB_OF[screen] || 'home'} onChange={(key) => go(key)} />
       </View>
     );
   }

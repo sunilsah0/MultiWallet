@@ -1,26 +1,23 @@
-import { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { colors } from '../theme';
 
 const CARDS = [
-  ['Hotels', 'Search & book rooms', '#2563EB'],
-  ['Cinema', 'Tickets & showtimes', '#9333EA'],
-  ['Shop', 'Online stores', '#EA580C'],
-  ['Food', 'Order from restaurants', '#DC2626'],
+  ['hotels', 'Hotels', 'Book rooms', '#2563EB'],
+  ['cinema', 'Cinema', 'Tickets and snacks', '#9333EA'],
+  ['shop', 'Shop', 'Online stores', '#EA580C'],
+  ['food', 'Food', 'Order from restaurants', '#DC2626'],
 ];
 
-export default function ServicesScreen() {
-  const [message, setMessage] = useState('');
+export default function ServicesScreen({ onOpenCategory, onOrders }) {
   return (
     <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 40 }}>
       <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text }}>Services</Text>
       <Text style={{ fontSize: 13, color: colors.muted, marginBottom: 16 }}>Everything you can pay for</Text>
-      {message ? <Text style={{ color: colors.muted, marginBottom: 12 }}>{message}</Text> : null}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -6 }}>
-        {CARDS.map(([name, desc, color]) => (
+        {CARDS.map(([key, name, desc, color]) => (
           <TouchableOpacity
-            key={name}
-            onPress={() => setMessage(`${name} is coming in Phase 7`)}
+            key={key}
+            onPress={() => onOpenCategory(key)}
             style={{ width: '50%', padding: 6 }}
           >
             <View style={{ backgroundColor: '#fff', borderRadius: 20, padding: 16, minHeight: 170 }}>
@@ -31,6 +28,9 @@ export default function ServicesScreen() {
           </TouchableOpacity>
         ))}
       </View>
+      <TouchableOpacity onPress={onOrders} style={{ marginTop: 20 }}>
+        <Text style={{ color: colors.blue, fontWeight: '600', textAlign: 'center' }}>See my orders →</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }

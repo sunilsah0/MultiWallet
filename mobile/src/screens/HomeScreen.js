@@ -20,13 +20,13 @@ function ActionButton({ label, color, onPress }) {
 }
 
 const SERVICES = [
-  ['Hotels', '#2563EB'],
-  ['Cinema', '#9333EA'],
-  ['Shop', '#EA580C'],
-  ['Food', '#DC2626'],
+  ['hotels', 'Hotels', '#2563EB'],
+  ['cinema', 'Cinema', '#9333EA'],
+  ['shop', 'Shop', '#EA580C'],
+  ['food', 'Food', '#DC2626'],
 ];
 
-export default function HomeScreen({ wallet, history, onSend, onServices, onSeeAll, onTopup }) {
+export default function HomeScreen({ wallet, history, onSend, onCategory, onSeeAll, onTopup }) {
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const firstName = (wallet.full_name || '').split(' ')[0];
@@ -66,10 +66,10 @@ export default function HomeScreen({ wallet, history, onSend, onServices, onSeeA
 
       <Text style={{ fontSize: 17, fontWeight: '700', color: colors.text, marginBottom: 10 }}>Services</Text>
       <View style={{ flexDirection: 'row', marginHorizontal: -4, marginBottom: 24 }}>
-        {SERVICES.map(([name, color]) => (
+        {SERVICES.map(([key, name, color]) => (
           <TouchableOpacity
-            key={name}
-            onPress={onServices}
+            key={key}
+            onPress={() => onCategory(key)}
             style={{
               flex: 1, backgroundColor: '#fff', borderRadius: 16, paddingVertical: 14,
               alignItems: 'center', marginHorizontal: 4,

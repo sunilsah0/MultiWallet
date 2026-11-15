@@ -57,3 +57,22 @@ export const sendMoney = (payload, key) =>
     body: payload,
     headers: { 'Idempotency-Key': key },
   });
+
+// Businesses (owner)
+export const myMerchants = () => request('/merchants/mine');
+export const merchantSales = (id) => request(`/merchants/${id}/sales`);
+
+// Browsing (public)
+export const getCategory = (category) => request(`/catalog/category/${category}`, { auth: false });
+export const getStore = (id) => request(`/catalog/merchants/${id}`, { auth: false });
+
+// Orders
+export const createOrder = (payload, key) =>
+  request('/orders', {
+    method: 'POST',
+    body: payload,
+    headers: { 'Idempotency-Key': key },
+  });
+export const myOrders = () => request('/orders/mine');
+export const businessOrders = (merchantId) => request(`/orders/business/${merchantId}`);
+export const completeOrder = (id) => request(`/orders/${id}/complete`, { method: 'POST' });
