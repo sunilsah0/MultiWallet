@@ -20,6 +20,8 @@ import ScanScreen from './src/screens/ScanScreen';
 import PayScreen from './src/screens/PayScreen';
 import MyQrScreen from './src/screens/MyQrScreen';
 import RequestsScreen from './src/screens/RequestsScreen';
+import SecurityScreen from './src/screens/SecurityScreen';
+import { PinProvider } from './src/PinProvider';
 import ProfileScreen from './src/screens/ProfileScreen';
 
 // Which bottom tab lights up for each screen
@@ -33,6 +35,7 @@ const TAB_OF = {
   business: 'profile',
   requests: 'home',
   myqr: 'home',
+  security: 'profile',
 };
 
 function Centered({ children }) {
@@ -184,6 +187,7 @@ export default function App() {
           {screen === 'history' && <HistoryScreen history={history} />}
           {screen === 'orders' && <OrdersScreen onBack={() => go('profile')} />}
           {screen === 'business' && <BusinessScreen onBack={() => go('profile')} />}
+          {screen === 'security' && <SecurityScreen onBack={() => go('profile')} onLogout={logout} />}
           {screen === 'requests' && <RequestsScreen onBack={() => go('home')} />}
           {screen === 'myqr' && <MyQrScreen wallet={wallet} onBack={() => go('home')} />}
           {screen === 'profile' && (
@@ -192,6 +196,7 @@ export default function App() {
               onLogout={logout}
               onOrders={() => go('orders')}
               onBusiness={() => go('business')}
+              onSecurity={() => go('security')}
             />
           )}
         </View>
@@ -202,10 +207,12 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1, backgroundColor: !loggedIn && !booting ? colors.blue : colors.bg }}>
-        <StatusBar style={!loggedIn && !booting ? 'light' : 'dark'} />
-        {content}
-      </SafeAreaView>
+      <PinProvider>
+        <SafeAreaView style={{ flex: 1, backgroundColor: !loggedIn && !booting ? colors.blue : colors.bg }}>
+          <StatusBar style={!loggedIn && !booting ? 'light' : 'dark'} />
+          {content}
+        </SafeAreaView>
+      </PinProvider>
     </SafeAreaProvider>
   );
 }

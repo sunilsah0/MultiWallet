@@ -8,11 +8,22 @@ export class ApiError extends Error {
   }
 }
 
-async function request(path, { method = 'GET', body, headers = {}, auth = true } = {}) {
+// The PIN box is drawn by PinProvider, which registers itself here
+let pinAsker = null;
+export const setPinAsker = (fn) => {
+  pinAsker = fn;
+};
+
+async function request(path, { method = 'GET', body, headers = {}, auth = true, pin = false } = {}) {
   const finalHeaders = { 'Content-Type': 'application/json', ...headers };
   if (auth) {
     const token = await loadToken();
     if (token) finalHeaders.Authorization = `Bearer ${token}`;
+  }
+  if (pin) {
+    const value = pinAsker ? await pinAsker() : null;
+    if (!value) throw new ApiError('Payment cancelled', 0);
+    finalHeaders['X-Payment-Pin'] = value;
   }
 
   let res;
@@ -56,6 +67,7 @@ export const sendMoney = (payload, key) =>
     method: 'POST',
     body: payload,
     headers: { 'Idempotency-Key': key },
+    pin: true,
   });
 
 // Businesses (owner)
@@ -72,6 +84,7 @@ export const createOrder = (payload, key) =>
     method: 'POST',
     body: payload,
     headers: { 'Idempotency-Key': key },
+    pin: true,
   });
 export const myOrders = () => request('/orders/mine');
 export const businessOrders = (merchantId) => request(`/orders/business/${merchantId}`);
@@ -83,6 +96,7 @@ export const payMerchant = (id, payload, key) =>
     method: 'POST',
     body: payload,
     headers: { 'Idempotency-Key': key },
+    pin: true,
   });
 
 // Who owns this phone number? (shown before paying)
@@ -92,6 +106,11 @@ export const lookupUser = (phone) => request(`/users/lookup?phone=${encodeURICom
 export const createRequest = (payload) => request('/requests', { method: 'POST', body: payload });
 export const incomingRequests = () => request('/requests/incoming');
 export const outgoingRequests = () => request('/requests/outgoing');
-export const payRequest = (id) => request(`/requests/${id}/pay`, { method: 'POST' });
+export const payRequest = (id) => request(`/requests/${id}/pay`, { method: 'POST', pin: true });
 export const declineRequest = (id) => request(`/requests/${id}/decline`, { method: 'POST' });
 export const cancelRequest = (id) => request(`/requests/${id}/cancel`, { method: 'POST' });
+
+// Security
+export const securityStatus = () => request('/security/status');
+export const setPin = (payload) => request('/security/pin', { method: 'POST', body: payload });
+export const logoutAll = () => request('/security/logout-all', { method: 'POST' });

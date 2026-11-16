@@ -23,11 +23,22 @@ export class ApiError extends Error {
 // A fresh key for each payment attempt. It stops double charges.
 export const newKey = () => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
-async function request(path, { method = 'GET', body, headers = {}, auth = true } = {}) {
+// The PIN box is drawn by PinProvider, which registers itself here
+let pinAsker = null;
+export const setPinAsker = (fn) => {
+  pinAsker = fn;
+};
+
+async function request(path, { method = 'GET', body, headers = {}, auth = true, pin = false } = {}) {
   const h = { 'Content-Type': 'application/json', ...headers };
   if (auth) {
     const t = getToken();
     if (t) h.Authorization = `Bearer ${t}`;
+  }
+  if (pin) {
+    const value = pinAsker ? await pinAsker() : null;
+    if (!value) throw new ApiError('Payment cancelled', 0);
+    h['X-Payment-Pin'] = value;
   }
 
   let res;
@@ -68,7 +79,7 @@ export const topup = (amountOre, key) =>
     headers: { 'Idempotency-Key': key },
   });
 export const sendMoney = (p, key) =>
-  request('/wallet/send', { method: 'POST', body: p, headers: { 'Idempotency-Key': key } });
+  request('/wallet/send', { method: 'POST', body: p, headers: { 'Idempotency-Key': key }, pin: true });
 
 // Businesses (owner)
 export const myMerchants = () => request('/merchants/mine');
@@ -86,7 +97,7 @@ export const removeProduct = (id) => request(`/catalog/products/${id}`, { method
 
 // Orders
 export const createOrder = (p, key) =>
-  request('/orders', { method: 'POST', body: p, headers: { 'Idempotency-Key': key } });
+  request('/orders', { method: 'POST', body: p, headers: { 'Idempotency-Key': key }, pin: true });
 export const myOrders = () => request('/orders/mine');
 export const businessOrders = (merchantId) => request(`/orders/business/${merchantId}`);
 export const completeOrder = (id) => request(`/orders/${id}/complete`, { method: 'POST' });
@@ -95,6 +106,11 @@ export const completeOrder = (id) => request(`/orders/${id}/complete`, { method:
 export const createRequest = (p) => request('/requests', { method: 'POST', body: p });
 export const incomingRequests = () => request('/requests/incoming');
 export const outgoingRequests = () => request('/requests/outgoing');
-export const payRequest = (id) => request(`/requests/${id}/pay`, { method: 'POST' });
+export const payRequest = (id) => request(`/requests/${id}/pay`, { method: 'POST', pin: true });
 export const declineRequest = (id) => request(`/requests/${id}/decline`, { method: 'POST' });
 export const cancelRequest = (id) => request(`/requests/${id}/cancel`, { method: 'POST' });
+
+// Security
+export const securityStatus = () => request('/security/status');
+export const setPin = (p) => request('/security/pin', { method: 'POST', body: p });
+export const logoutAll = () => request('/security/logout-all', { method: 'POST' });

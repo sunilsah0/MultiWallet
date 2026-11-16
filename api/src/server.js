@@ -10,6 +10,7 @@ import catalogRoutes from './routes/catalog.js';
 import orderRoutes from './routes/orders.js';
 import requestRoutes from './routes/requests.js';
 import userRoutes from './routes/users.js';
+import securityRoutes from './routes/security.js';
 
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
   console.error('JWT_SECRET is missing or too short (use at least 32 characters) in api/.env');
@@ -19,7 +20,22 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
 const app = express();
 app.set('trust proxy', 1); // Codespaces and hosting sit behind a proxy
 app.use(helmet());
-app.use(cors()); // open for development; we will restrict it before going live
+// Only our own websites may call the API from a browser.
+// Production: set CORS_ORIGINS=https://your-site.example,https://www.your-site.example and NODE_ENV=production
+// Phone apps and curl send no Origin header, so they are not affected.
+const allowedOrigins = (process.env.CORS_ORIGINS || '').split(',').map((s) => s.trim()).filter(Boolean);
+const isProd = process.env.NODE_ENV === 'production';
+const devOrigin = /^https:\/\/[a-z0-9-]+\.app\.github\.dev$|^http:\/\/localhost(:\d+)?$/;
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      if (!isProd && devOrigin.test(origin)) return callback(null, true);
+      callback(null, false);
+    },
+  })
+);
 app.use(express.json({ limit: '10kb' }));
 
 app.get('/health', (req, res) => res.json({ ok: true }));
@@ -31,6 +47,7 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 app.use('/auth', authLimiter, authRoutes);
+app.use('/security', authLimiter, securityRoutes);
 app.use('/wallet', walletRoutes);
 app.use('/merchants', merchantRoutes);
 app.use('/catalog', catalogRoutes);

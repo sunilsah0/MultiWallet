@@ -4,6 +4,7 @@ import { pool, query } from '../db.js';
 import { requireAuth, validate, wrap } from '../middleware.js';
 import { phone } from '../schemas.js';
 import { SAFE_ERRORS } from '../payments.js';
+import { paymentGuard } from '../pin.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -85,6 +86,7 @@ router.get(
 // POST /requests/:id/pay : I accept and pay a request
 router.post(
   '/:id/pay',
+  ...paymentGuard,
   wrap(async (req, res) => {
     const { id } = req.params;
     if (!isUuid(id)) return res.status(400).json({ error: 'Invalid request id' });

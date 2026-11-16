@@ -1,5 +1,6 @@
 import './globals.css';
 import { AuthProvider } from '../lib/auth';
+import PinProvider from '../components/PinProvider';
 
 export const metadata = {
   title: 'MultiWallet',
@@ -10,7 +11,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <PinProvider>{children}</PinProvider>
+        </AuthProvider>
       </body>
     </html>
   );

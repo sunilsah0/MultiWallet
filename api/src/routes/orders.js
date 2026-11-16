@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { pool, query } from '../db.js';
 import { requireAuth, validate, wrap } from '../middleware.js';
 import { SAFE_ERRORS, getIdempotencyKey } from '../payments.js';
+import { paymentGuard } from '../pin.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -26,6 +27,7 @@ const orderSchema = z.object({
 router.post(
   '/',
   validate(orderSchema),
+  ...paymentGuard,
   wrap(async (req, res) => {
     const key = getIdempotencyKey(req, res);
     if (!key) return;

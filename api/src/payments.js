@@ -7,6 +7,7 @@ export const SAFE_ERRORS = [
   'cannot pay yourself',
   'sender wallet not found',
   'receiver wallet not found',
+  'daily limit exceeded',
 ];
 
 export async function getMyWalletId(userId) {

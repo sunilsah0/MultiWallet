@@ -11,7 +11,7 @@ function Row({ label, value }) {
   );
 }
 
-export default function ProfileScreen({ wallet, onLogout, onOrders, onBusiness }) {
+export default function ProfileScreen({ wallet, onLogout, onOrders, onBusiness, onSecurity }) {
   return (
     <ScrollView contentContainerStyle={{ padding: 24 }}>
       <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text, marginBottom: 20 }}>Profile</Text>
@@ -22,6 +22,7 @@ export default function ProfileScreen({ wallet, onLogout, onOrders, onBusiness }
       </View>
       <Button title="My orders" onPress={onOrders} />
       <Button title="My business" onPress={onBusiness} outline />
+      <Button title="Payment PIN and security" onPress={onSecurity} outline />
       <Button title="Log out" onPress={onLogout} color={colors.red} outline />
       <Text style={{ textAlign: 'center', color: colors.muted, fontSize: 12, marginTop: 16 }}>
         Prototype: test money only

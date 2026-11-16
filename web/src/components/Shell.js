@@ -11,6 +11,7 @@ const LINKS = [
   ['/orders', 'My orders'],
   ['/requests', 'Requests'],
   ['/business', 'My business'],
+  ['/security', 'Security'],
 ];
 
 // Wraps every logged-in page: top menu + redirect to /login if not logged in
