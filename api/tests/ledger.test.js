@@ -7,7 +7,8 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import pg from 'pg';
 
-const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 15 });
+// Tests create data, so point them at your DEV database, never at production.
+const pool = new pg.Pool({ connectionString: process.env.TEST_DATABASE_URL || process.env.DATABASE_URL, max: 15 });
 const q = (text, params) => pool.query(text, params);
 after(() => pool.end());
 
@@ -78,10 +79,18 @@ test('you cannot pay yourself and amounts must be positive', async () => {
 test('ledger and audit log can never be edited or deleted', async () => {
   const sys = await systemWallet();
   const a = await makeUser('A');
-  await transfer(sys, a.wallet, 1000, crypto.randomUUID(), 'topup');
+  const b = await makeUser('B');
+  await transfer(sys, a.wallet, 5000, crypto.randomUUID(), 'topup');
+  await transfer(a.wallet, b.wallet, 1000); // this payment writes an audit row for user A
+
   await assert.rejects(q('update ledger_entries set amount_ore = 1 where wallet_id = $1', [a.wallet]), /cannot be changed or deleted/);
   await assert.rejects(q('delete from ledger_entries where wallet_id = $1', [a.wallet]), /cannot be changed or deleted/);
+
+  // make sure there really is an audit row to try to change, then try to change it
+  const rows = await q(`select count(*)::int as n from audit_log where user_id = $1`, [a.id]);
+  assert.ok(rows.rows[0].n >= 1);
   await assert.rejects(q('delete from audit_log where user_id = $1', [a.id]), /cannot be changed or deleted/);
+  await assert.rejects(q(`update audit_log set event = 'x' where user_id = $1`, [a.id]), /cannot be changed or deleted/);
 });
 
 test('10 payments at the same moment can never overspend', async () => {

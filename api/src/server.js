@@ -17,6 +17,15 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
   process.exit(1);
 }
 
+if (process.env.NODE_ENV === 'production') {
+  if (!process.env.CORS_ORIGINS) {
+    console.warn('WARNING: CORS_ORIGINS is empty, so no website can call this API from a browser.');
+  }
+  if (process.env.ALLOW_TEST_TOPUP === 'true') {
+    console.warn('NOTE: test top-up is ON (fake money). Turn it off before any real money is involved.');
+  }
+}
+
 const app = express();
 app.set('trust proxy', 1); // Codespaces and hosting sit behind a proxy
 app.use(helmet());
